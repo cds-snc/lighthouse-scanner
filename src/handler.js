@@ -1,5 +1,5 @@
 "use strict";
-import { scanURL, saveToFirestore } from "./lib/";
+import { saveToFirestore, scanURL } from "./lib/";
 
 import { webhook } from "./__mocks__/webhook";
 
@@ -9,8 +9,9 @@ export const local = async () => {
 };
 
 export const handle = async event => {
-  const { url } = event.body;
+  const { url } = event.query;
   const data = await scanURL(url);
+
   const payload = {
     url: url,
     data: data

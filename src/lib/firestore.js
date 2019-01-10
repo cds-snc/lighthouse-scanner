@@ -13,12 +13,14 @@ switch (process.env.NODE_ENV) {
     });
     db = admin.firestore();
     break;
+
   case "test":
     const MockCloudFirestore = require("mock-cloud-firestore");
     const { fixtureData } = require("../__mocks__/firestore.js");
     let firebase = new MockCloudFirestore(fixtureData);
     db = firebase.firestore();
     break;
+
   default:
     const functions = require("firebase-functions");
     admin.initializeApp(functions.config().firebase);
@@ -27,11 +29,11 @@ switch (process.env.NODE_ENV) {
 
 module.exports.saveToFirestore = async (payload, table) => {
   payload["updatedAt"] = Date.now();
-  const key = url.URL(payload.url).hostname;
+  const key = new url.URL(payload.url).hostname;
+
   return db
     .collection(table)
     .doc(key)
     .set(payload, { merge: true })
-    .then(() => true)
-    .catch(() => false);
+    .then(resp => true);
 };
