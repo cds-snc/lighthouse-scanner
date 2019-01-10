@@ -1,21 +1,22 @@
 "use strict";
-import { saveToFirestore, scanURL } from "./lib/";
+import { getNextDomain, saveToFirestore, scanURL } from "./lib/";
 
-import { webhook } from "./__mocks__/webhook";
-
-export const local = async () => {
-  const event = await webhook;
-  return handle(event);
-};
-
-export const handle = async event => {
-  const { url } = event.query;
-  const data = await scanURL(url);
+export const handle = async () => {
+  const domain = await getNextDomain();
+  const data = await scanURL(domain.url);
 
   const payload = {
-    url: url,
+    url: domain.url,
     data: data
   };
-  saveToFirestore(payload, "scans");
+
+  await saveToFirestore(payload, "scans");
+
+  const updatePayload = {
+    url: domain.url
+  };
+
+  await saveToFirestore(updatePayload, "domains");
+
   return true;
 };

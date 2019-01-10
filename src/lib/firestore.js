@@ -27,6 +27,15 @@ switch (process.env.NODE_ENV) {
     db = admin.firestore();
 }
 
+module.exports.getNextDomain = async () => {
+  const reposRef = db.collection("domains");
+  const latestQuery = reposRef.orderBy("updatedAt", "asc").limit(1);
+  const latestCollection = await latestQuery.get();
+  let latest = [];
+  latestCollection.forEach(r => latest.push(r.data()));
+  return latest[0];
+};
+
 module.exports.saveToFirestore = async (payload, table) => {
   payload["updatedAt"] = Date.now();
   const key = new url.URL(payload.url).hostname;
