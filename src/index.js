@@ -3,6 +3,7 @@ require("dotenv-safe").config({ allowEmptyValues: true });
 
 const handle = require("./handler").handle;
 const local = require("./handler").local;
+const loadUrls = require("./loader").loadUrls;
 
 const scanDomain = async (request, response) => {
   await handle(request);
@@ -12,9 +13,13 @@ const scanDomain = async (request, response) => {
 // used for local testing
 (async () => {
   const argv = require("minimist")(process.argv.slice(2));
-  const { mockPayload } = argv;
+  const { mockPayload, urls } = argv;
   if (mockPayload) {
     const result = await local();
+    console.log(result);
+  }
+  if (urls) {
+    const result = await loadUrls();
     console.log(result);
   }
 })();
