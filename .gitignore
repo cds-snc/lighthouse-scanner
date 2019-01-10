@@ -60,7 +60,7 @@ typings/
 # next.js build output
 .next
 
-.DS_Store
-.swp
+*.DS_Store
+*.swp
 
 urls.json
