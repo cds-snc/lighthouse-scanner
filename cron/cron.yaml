@@ -1,1 +1,4 @@
 cron:
+  - description: "Minute Job"
+    url: /minutes
+    schedule: every 1 minutes
