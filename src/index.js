@@ -1,6 +1,7 @@
 require = require("esm")(module); // eslint-disable-line no-global-assign
 require("dotenv-safe").config({ allowEmptyValues: true });
 
+const deleteAllCollections = require("./delete").deleteAllCollections;
 const handle = require("./handler").handle;
 const loadUrls = require("./loader").loadUrls;
 
@@ -12,7 +13,10 @@ const scanDomain = async (request, response) => {
 // used for local testing
 (async () => {
   const argv = require("minimist")(process.argv.slice(2));
-  const { mockPayload, urls } = argv;
+  const { deleteAll, mockPayload, urls } = argv;
+  if (deleteAll) {
+    await deleteAllCollections();
+  }
   if (mockPayload) {
     const result = await handle();
     console.log(result);

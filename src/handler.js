@@ -3,7 +3,24 @@ import { getNextDomain, saveToFirestore, scanURL } from "./lib/";
 
 export const handle = async () => {
   const domain = await getNextDomain();
-  const data = await scanURL(domain.url);
+
+  let prot = domain.prot || "https://";
+  const data = await scanURL(`${prot}${domain.url}`);
+
+  switch (data.runtimeError.code) {
+    case "FAILED_DOCUMENT_REQUEST":
+      prot = "http://";
+      break;
+    default:
+      break;
+  }
+
+  const updatePayload = {
+    prot: prot,
+    url: domain.url
+  };
+
+  await saveToFirestore(updatePayload, "domains");
 
   const payload = {
     url: domain.url,
@@ -11,12 +28,6 @@ export const handle = async () => {
   };
 
   await saveToFirestore(payload, "scans");
-
-  const updatePayload = {
-    url: domain.url
-  };
-
-  await saveToFirestore(updatePayload, "domains");
 
   return true;
 };

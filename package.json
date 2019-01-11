@@ -6,6 +6,7 @@
   "license": "MIT",
   "main": "src/index.js",
   "scripts": {
+    "delete": "NODE_ENV=dev node src/index.js --deleteAll",
     "dev": "NODE_ENV=dev node src/index.js --mockPayload",
     "load": "NODE_ENV=dev node src/index.js --urls",
     "test": "jest"

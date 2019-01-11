@@ -15,7 +15,7 @@ export const loadUrls = async () => {
     const urls = JSON.parse(result);
     asyncForEach(urls, async url => {
       const payload = {
-        url: `https://${url}`
+        url: url
       };
       await saveToFirestore(payload, "domains");
       console.log(`Added ${url} to domains list`);

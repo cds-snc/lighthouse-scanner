@@ -27,18 +27,65 @@ switch (process.env.NODE_ENV) {
     db = admin.firestore();
 }
 
+module.exports.deleteCollection = async (collectionPath, batchSize) => {
+  var collectionRef = db.collection(collectionPath);
+  var query = collectionRef.orderBy("__name__").limit(batchSize);
+
+  return new Promise((resolve, reject) => {
+    deleteQueryBatch(db, query, batchSize, resolve, reject);
+  });
+};
+
+function deleteQueryBatch(db, query, batchSize, resolve, reject) {
+  query
+    .get()
+    .then(snapshot => {
+      // When there are no documents left, we are done
+      if (snapshot.size === 0) {
+        return 0;
+      }
+
+      // Delete documents in a batch
+      var batch = db.batch();
+      snapshot.docs.forEach(doc => {
+        batch.delete(doc.ref);
+      });
+
+      return batch.commit().then(() => {
+        return snapshot.size;
+      });
+    })
+    .then(numDeleted => {
+      if (numDeleted === 0) {
+        resolve();
+        return;
+      }
+
+      // Recurse on the next process tick, to avoid
+      // exploding the stack.
+      process.nextTick(() => {
+        deleteQueryBatch(db, query, batchSize, resolve, reject);
+      });
+    })
+    .catch(reject);
+}
 module.exports.getNextDomain = async () => {
   const reposRef = db.collection("domains");
   const latestQuery = reposRef.orderBy("updatedAt", "asc").limit(1);
   const latestCollection = await latestQuery.get();
   let latest = [];
   latestCollection.forEach(r => latest.push(r.data()));
-  return latest[0];
+  return latest.length > 0 ? latest[0] : false;
 };
 
 module.exports.saveToFirestore = async (payload, table) => {
   payload["updatedAt"] = Date.now();
-  const key = new url.URL(payload.url).hostname;
+  let key;
+  try {
+    key = new url.URL(payload.url).hostname;
+  } catch (_error) {
+    key = payload.url;
+  }
 
   return db
     .collection(table)
