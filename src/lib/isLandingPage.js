@@ -48,6 +48,7 @@ export const isLandingPage = async startUrl => {
   let langs = null;
   await page.goto(startUrl);
   langs = await hrefLinks(page);
+  langs = [...new Set(langs)]; // unique
 
   if (langs.length === 2) {
     console.log("is link landing page = true");
@@ -58,6 +59,7 @@ export const isLandingPage = async startUrl => {
   // await page.screenshot({ path: "example.png" });
 
   langs = await formLinks(page);
+  langs = [...new Set(langs)]; // unique
 
   if (langs.length === 2) {
     console.log("is form landing = true");
