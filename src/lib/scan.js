@@ -2,6 +2,7 @@ const lighthouse = require("lighthouse");
 const chromeLauncher = require("chrome-launcher");
 const path = require("path");
 const BrowserFetcher = require("puppeteer/lib/BrowserFetcher");
+const isLandingPage = require("./isLandingPage").isLandingPage;
 
 const browserFetcher = new BrowserFetcher(
   path.join(__dirname, "../../node_modules/puppeteer/")
@@ -22,7 +23,6 @@ let opts = {
 };
 
 export const scanURL = async url => {
-  console.log("Launching lighthouse for " + url);
   const chrome = await chromeLauncher.launch({
     chromeFlags: opts.chromeFlags,
     chromePath: revisionInfo.executablePath
@@ -30,7 +30,18 @@ export const scanURL = async url => {
 
   opts.lighthouseFlags.port = chrome.port;
 
-  const res = await lighthouse(url, opts.lighthouseFlags);
+  let startUrl = "";
+
+  try {
+    startUrl = await isLandingPage(url);
+  } catch (e) {
+    console.log(e);
+    startUrl = url;
+  }
+
+  console.log(`Launching lighthouse for ${url} => ${startUrl}`);
+
+  const res = await lighthouse(startUrl, opts.lighthouseFlags);
   await chrome.kill();
   return JSON.parse(res.report);
 };
