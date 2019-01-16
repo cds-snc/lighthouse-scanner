@@ -12,9 +12,11 @@ export const handle = async () => {
   let startUrl = domain.url;
 
   if (data && data.finalUrl && isURL(new URL(data.finalUrl))) {
-    const url = new URL(data.finalUrl);
-    startUrl = `${url.hostname}${url.pathname}`;
+    const parsedURL = new URL(data.finalUrl);
+    startUrl = `${parsedURL.hostname}${parsedURL.pathname}`;
   }
+
+  console.log("save", startUrl);
 
   switch (data.runtimeError.code) {
     case "FAILED_DOCUMENT_REQUEST":

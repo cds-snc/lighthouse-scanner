@@ -1,6 +1,4 @@
 const admin = require("firebase-admin");
-const url = require("url");
-
 let db;
 
 switch (process.env.NODE_ENV) {
@@ -82,14 +80,20 @@ module.exports.saveToFirestore = async (payload, table) => {
   payload["updatedAt"] = Date.now();
   let key;
   try {
-    key = new url.URL(payload.url).hostname;
-  } catch (_error) {
+    key = new URL(`https://${payload.url}`).hostname;
+  } catch (e) {
+    console.log(e.message);
     key = payload.url;
   }
+
+  console.log(`updated key ${key} ${table}`);
 
   return db
     .collection(table)
     .doc(key)
     .set(payload, { merge: true })
-    .then(resp => true);
+    .then(resp => true)
+    .catch(e => {
+      console.log(e.message);
+    });
 };
