@@ -1,3 +1,4 @@
+const URL = require("url").URL;
 const puppeteer = require("puppeteer");
 const isURL = require("isurl");
 const langText = ["english", "français"];

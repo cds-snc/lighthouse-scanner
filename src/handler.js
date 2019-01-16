@@ -1,6 +1,7 @@
 "use strict";
 import { getNextDomain, saveToFirestore, scanURL } from "./lib/";
 import isURL from "isurl";
+const URL = require("url").URL;
 
 export const handle = async () => {
   const domain = await getNextDomain();
