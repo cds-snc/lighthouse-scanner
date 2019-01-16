@@ -5,7 +5,7 @@ import isURL from "isurl";
 export const handle = async () => {
   const domain = await getNextDomain();
 
-  let prot = domain.prot || "https://";
+  let prot = "http://";
   const data = await scanURL(`${prot}${domain.url}`);
 
   let startUrl = domain.url;
