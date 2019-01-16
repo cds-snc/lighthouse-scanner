@@ -10,7 +10,7 @@ export const handle = async () => {
 
   let startUrl = domain.url;
 
-  if (data && data.finalUrl && isURL(data.finalUrl)) {
+  if (data && data.finalUrl && isURL(new URL(data.finalUrl))) {
     const url = new URL(data.finalUrl);
     startUrl = `${url.hostname}${url.pathname}`;
   }
