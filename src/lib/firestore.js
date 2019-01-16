@@ -73,7 +73,9 @@ module.exports.getNextDomain = async () => {
   const latestQuery = reposRef.orderBy("updatedAt", "asc").limit(1);
   const latestCollection = await latestQuery.get();
   let latest = [];
-  latestCollection.forEach(r => latest.push(r.data()));
+  latestCollection.forEach(r =>
+    latest.push(Object.assign({ id: r.id }, r.data()))
+  );
   return latest.length > 0 ? latest[0] : false;
 };
 
@@ -81,10 +83,11 @@ module.exports.saveToFirestore = async (payload, table) => {
   payload["updatedAt"] = Date.now();
   let key;
   try {
-    key = new URL(`https://${payload.url}`).hostname;
+    key = new URL(`https://${payload.originalKey}`).hostname;
+    key = key.replace("www.", "");
   } catch (e) {
     console.log(e.message);
-    key = payload.url;
+    key = payload.originalKey;
   }
 
   console.log(`updated key ${key} ${table}`);

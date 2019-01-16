@@ -28,12 +28,14 @@ export const handle = async () => {
 
   const updatePayload = {
     prot: prot,
+    originalKey: domain.id,
     url: startUrl
   };
 
   await saveToFirestore(updatePayload, "domains");
 
   const payload = {
+    originalKey: domain.id,
     url: domain.url,
     data: data
   };
