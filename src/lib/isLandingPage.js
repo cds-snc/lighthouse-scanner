@@ -49,7 +49,7 @@ export const isLandingPage = async startUrl => {
   langs = await hrefLinks(page);
   langs = [...new Set(langs)]; // unique
 
-  if (langs.length === 2) {
+  if (langs.length >= 2) {
     if (isURL(langs[0])) {
       console.log("is link landing page = true");
       return langs[0];
@@ -64,7 +64,7 @@ export const isLandingPage = async startUrl => {
   langs = await formLinks(page);
   langs = [...new Set(langs)]; // unique
 
-  if (langs.length === 2) {
+  if (langs.length >= 2) {
     if (isURL(langs[0])) {
       console.log("is form landing = true");
       return langs[0];
