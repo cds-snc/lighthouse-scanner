@@ -35,7 +35,7 @@ export const scanURL = async url => {
   try {
     startUrl = await isLandingPage(url);
   } catch (e) {
-    console.log(e);
+    console.warn("Is landing page error:", e);
     startUrl = url;
   }
 
