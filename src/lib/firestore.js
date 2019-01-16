@@ -1,5 +1,6 @@
 const admin = require("firebase-admin");
 let db;
+const URL = require("url").URL;
 
 switch (process.env.NODE_ENV) {
   case "dev":
