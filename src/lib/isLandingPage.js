@@ -1,4 +1,5 @@
 const puppeteer = require("puppeteer");
+const isURL = require("isurl");
 const langText = ["english", "français"];
 
 const hasLang = node => {
@@ -41,8 +42,6 @@ const formLinks = async page => {
 };
 
 export const isLandingPage = async startUrl => {
-  console.log("isLandingPage => ", startUrl);
-
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   let langs = null;
@@ -51,8 +50,12 @@ export const isLandingPage = async startUrl => {
   langs = [...new Set(langs)]; // unique
 
   if (langs.length === 2) {
-    console.log("is link landing page = true");
-    return langs[0];
+    if (isURL(langs[0])) {
+      console.log("is link landing page = true");
+      return langs[0];
+    } else {
+      return startUrl;
+    }
   }
 
   await page.goto(startUrl);
@@ -62,9 +65,15 @@ export const isLandingPage = async startUrl => {
   langs = [...new Set(langs)]; // unique
 
   if (langs.length === 2) {
-    console.log("is form landing = true");
-    return langs[0].link;
+    if (isURL(langs[0])) {
+      console.log("is form landing = true");
+      return langs[0];
+    } else {
+      return startUrl;
+    }
   }
+
+  browser.close();
 
   return startUrl;
 };
