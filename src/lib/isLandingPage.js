@@ -42,7 +42,16 @@ const formLinks = async page => {
   return langs;
 };
 
+const pageOptions = { waitUntil: ["domcontentloaded", "networkidle2"] };
+
 export const isLandingPage = async (startUrl, useGlobalPuppeteer = false) => {
+  /*
+  const options = {
+    headless: false,
+    slowMo: 3000
+  };
+  */
+
   const browser = !useGlobalPuppeteer
     ? await puppeteer.launch()
     : useGlobalPuppeteer.browser;
@@ -51,20 +60,27 @@ export const isLandingPage = async (startUrl, useGlobalPuppeteer = false) => {
     : useGlobalPuppeteer.page;
 
   let langs = null;
-  await page.goto(startUrl);
+  await page.goto(startUrl, pageOptions);
   langs = await hrefLinks(page);
   langs = [...new Set(langs)]; // unique
 
   if (langs.length >= 2) {
     if (isURL(new URL(langs[0]))) {
       console.log("is link landing page = true");
+
+      if (!useGlobalPuppeteer) {
+        await browser.close();
+      }
       return langs[0];
     } else {
+      if (!useGlobalPuppeteer) {
+        await browser.close();
+      }
       return startUrl;
     }
   }
 
-  await page.goto(startUrl);
+  await page.goto(startUrl, pageOptions);
   // await page.screenshot({ path: "example.png" });
 
   langs = await formLinks(page);
