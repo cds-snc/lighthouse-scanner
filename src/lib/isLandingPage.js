@@ -42,9 +42,14 @@ const formLinks = async page => {
   return langs;
 };
 
-export const isLandingPage = async startUrl => {
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
+export const isLandingPage = async (startUrl, useGlobalPuppeteer = false) => {
+  const browser = !useGlobalPuppeteer
+    ? await puppeteer.launch()
+    : useGlobalPuppeteer.browser;
+  const page = !useGlobalPuppeteer
+    ? await browser.newPage()
+    : useGlobalPuppeteer.page;
+
   let langs = null;
   await page.goto(startUrl);
   langs = await hrefLinks(page);
@@ -74,7 +79,9 @@ export const isLandingPage = async startUrl => {
     }
   }
 
-  browser.close();
+  if (!useGlobalPuppeteer) {
+    await browser.close();
+  }
 
   return startUrl;
 };
