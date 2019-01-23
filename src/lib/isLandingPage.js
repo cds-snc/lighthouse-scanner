@@ -66,7 +66,7 @@ export const isLandingPage = async (startUrl, useGlobalPuppeteer = false) => {
 
   if (langs.length >= 2) {
     if (isURL(new URL(langs[0]))) {
-      console.log("is link landing page = true");
+      console.log("is link landing page = true", langs[0]);
 
       if (!useGlobalPuppeteer) {
         await browser.close();
