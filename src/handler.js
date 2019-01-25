@@ -12,26 +12,21 @@ export const handle = async () => {
   let startUrl = url;
   let prot = "http://";
 
-  try {
-    data = await scanURL(`${prot}${url}`);
+  data = await scanURL(`${prot}${url}`);
 
-    if (data && data.finalUrl && isURL(new URL(data.finalUrl))) {
-      const parsedURL = new URL(data.finalUrl);
-      startUrl = `${parsedURL.hostname}${parsedURL.pathname}`;
-    }
+  if (data && data.finalUrl && isURL(new URL(data.finalUrl))) {
+    const parsedURL = new URL(data.finalUrl);
+    startUrl = `${parsedURL.hostname}${parsedURL.pathname}`;
+  }
 
-    console.log("save", startUrl);
+  console.log("save", startUrl);
 
-    switch (data.runtimeError.code) {
-      case "FAILED_DOCUMENT_REQUEST":
-        prot = "http://";
-        break;
-      default:
-        break;
-    }
-  } catch (e) {
-    console.error(e);
-    failed = true;
+  switch (data.runtimeError.code) {
+    case "FAILED_DOCUMENT_REQUEST":
+      prot = "http://";
+      break;
+    default:
+      break;
   }
 
   const updatePayload = {
