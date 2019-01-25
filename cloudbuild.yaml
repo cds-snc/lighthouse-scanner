@@ -2,10 +2,6 @@ steps:
   - name: "gcr.io/cloud-builders/yarn"
     id: "install"
     args: ["install"]
-  - name: "gcr.io/cloud-builders/yarn"
-    id: "test"
-    args: ["test"]
-    env: ["FIRESTORE_URL=''"]
   - name: "gcr.io/cloud-builders/gcloud"
     id: "decrypt .env"
     args:
