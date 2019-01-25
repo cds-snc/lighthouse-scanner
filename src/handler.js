@@ -7,26 +7,34 @@ export const handle = async () => {
   const document = await getNextDomain();
   const { url } = document.data();
 
-  let prot = "http://";
-  const data = await scanURL(`${prot}${url}`);
+  let failed = false;
+  let data = {};
   let startUrl = url;
+  let prot = "http://";
 
-  if (data && data.finalUrl && isURL(new URL(data.finalUrl))) {
-    const parsedURL = new URL(data.finalUrl);
-    startUrl = `${parsedURL.hostname}${parsedURL.pathname}`;
-  }
+  try {
+    const data = await scanURL(`${prot}${url}`);
 
-  console.log("save", startUrl);
+    if (data && data.finalUrl && isURL(new URL(data.finalUrl))) {
+      const parsedURL = new URL(data.finalUrl);
+      startUrl = `${parsedURL.hostname}${parsedURL.pathname}`;
+    }
 
-  switch (data.runtimeError.code) {
-    case "FAILED_DOCUMENT_REQUEST":
-      prot = "http://";
-      break;
-    default:
-      break;
+    console.log("save", startUrl);
+
+    switch (data.runtimeError.code) {
+      case "FAILED_DOCUMENT_REQUEST":
+        prot = "http://";
+        break;
+      default:
+        break;
+    }
+  } catch (e) {
+    failed = true;
   }
 
   const updatePayload = {
+    failed: failed,
     prot: prot,
     url: startUrl
   };

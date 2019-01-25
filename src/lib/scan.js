@@ -34,14 +34,12 @@ export const scanURL = async url => {
 
   try {
     startUrl = await isLandingPage(url);
+    const res = await lighthouse(startUrl, opts.lighthouseFlags);
+    await chrome.kill();
+    return JSON.parse(res.report);
   } catch (e) {
     console.warn("Is landing page error:", e);
-    startUrl = url;
+    await chrome.kill();
+    return e;
   }
-
-  console.log(`Launching lighthouse for ${url} => ${startUrl}`);
-
-  const res = await lighthouse(startUrl, opts.lighthouseFlags);
-  await chrome.kill();
-  return JSON.parse(res.report);
 };
