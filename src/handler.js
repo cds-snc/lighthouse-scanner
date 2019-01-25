@@ -13,7 +13,7 @@ export const handle = async () => {
   let prot = "http://";
 
   try {
-    const data = await scanURL(`${prot}${url}`);
+    data = await scanURL(`${prot}${url}`);
 
     if (data && data.finalUrl && isURL(new URL(data.finalUrl))) {
       const parsedURL = new URL(data.finalUrl);
@@ -30,6 +30,7 @@ export const handle = async () => {
         break;
     }
   } catch (e) {
+    console.error(e);
     failed = true;
   }
 
