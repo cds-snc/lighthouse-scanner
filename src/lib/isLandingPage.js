@@ -53,7 +53,10 @@ export const isLandingPage = async (startUrl, useGlobalPuppeteer = false) => {
   */
 
   const browser = !useGlobalPuppeteer
-    ? await puppeteer.launch({ ignoreHTTPSErrors: true })
+    ? await puppeteer.launch({
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        ignoreHTTPSErrors: true
+      })
     : useGlobalPuppeteer.browser;
   const page = !useGlobalPuppeteer
     ? await browser.newPage()
