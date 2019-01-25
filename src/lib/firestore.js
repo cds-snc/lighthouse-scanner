@@ -1,6 +1,5 @@
 const admin = require("firebase-admin");
 let db;
-const URL = require("url").URL;
 
 switch (process.env.NODE_ENV) {
   case "dev":
@@ -73,28 +72,15 @@ module.exports.getNextDomain = async () => {
   const latestQuery = reposRef.orderBy("updatedAt", "asc").limit(1);
   const latestCollection = await latestQuery.get();
   let latest = [];
-  latestCollection.forEach(r =>
-    latest.push(Object.assign({ id: r.id }, r.data()))
-  );
+  latestCollection.forEach(r => latest.push(r));
   return latest.length > 0 ? latest[0] : false;
 };
 
-module.exports.saveToFirestore = async (payload, table) => {
+module.exports.saveToFirestore = async (document, payload, table) => {
   payload["updatedAt"] = Date.now();
-  let key;
-  try {
-    key = new URL(`https://${payload.originalKey}`).hostname;
-    key = key.replace("www.", "");
-  } catch (e) {
-    console.log(e.message);
-    key = payload.originalKey;
-  }
-
-  console.log(`updated key ${key} ${table}`);
-
   return db
     .collection(table)
-    .doc(key)
+    .doc(document.id)
     .set(payload, { merge: true })
     .then(resp => true)
     .catch(e => {

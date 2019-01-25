@@ -4,12 +4,12 @@ import isURL from "isurl";
 const URL = require("url").URL;
 
 export const handle = async () => {
-  const domain = await getNextDomain();
+  const document = await getNextDomain();
+  const { url } = document.data();
 
   let prot = "http://";
-  const data = await scanURL(`${prot}${domain.url}`);
-
-  let startUrl = domain.url;
+  const data = await scanURL(`${prot}${url}`);
+  let startUrl = url;
 
   if (data && data.finalUrl && isURL(new URL(data.finalUrl))) {
     const parsedURL = new URL(data.finalUrl);
@@ -28,19 +28,17 @@ export const handle = async () => {
 
   const updatePayload = {
     prot: prot,
-    originalKey: domain.id,
     url: startUrl
   };
 
-  await saveToFirestore(updatePayload, "domains");
+  await saveToFirestore(document, updatePayload, "domains");
 
   const payload = {
-    originalKey: domain.id,
-    url: domain.url,
+    url: startUrl,
     data: data
   };
 
-  await saveToFirestore(payload, "scans");
+  await saveToFirestore(document, payload, "scans");
 
   return true;
 };
