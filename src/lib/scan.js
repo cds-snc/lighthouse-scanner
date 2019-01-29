@@ -32,8 +32,19 @@ export const scanURL = async url => {
 
   let startUrl = "";
 
-  startUrl = await isLandingPage(url);
-  const res = await lighthouse(startUrl, opts.lighthouseFlags);
-  await chrome.kill();
-  return JSON.parse(res.report);
+  try {
+    startUrl = await isLandingPage(url);
+  } catch (e) {
+    console.warn("Is landing page error:", e);
+    startUrl = url;
+  }
+
+  try {
+    const res = await lighthouse(startUrl, opts.lighthouseFlags);
+    await chrome.kill();
+    return JSON.parse(res.report);
+  } catch (e) {
+    await chrome.kill();
+    return {};
+  }
 };

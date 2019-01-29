@@ -7,7 +7,7 @@ const loadUrls = require("./loader").loadUrls;
 
 const scanDomain = async (request, response) => {
   await handle();
-  response.status(200).send("Done");
+  return response.status(200).send("Done");
 };
 
 // used for local testing
@@ -20,6 +20,7 @@ const scanDomain = async (request, response) => {
   if (mockPayload) {
     const result = await handle();
     console.log(result);
+    return;
   }
   if (urls) {
     const result = await loadUrls();
